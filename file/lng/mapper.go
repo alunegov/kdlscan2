@@ -38,7 +38,7 @@ func Load(fileName string) (*File, error) {
 			}
 
 			flag, name, version, value := parseKey(baseLine)
-			section.NewKey(flag, name, version, value)
+			_, _ = section.NewKey(flag, name, version, value)
 		}
 	}
 	if err := s.Err(); err != nil {

@@ -48,7 +48,7 @@ func syncResourceStrings(targetFile *lng.File, refFile *lng.File) error {
 	})
 	// если это файл после kdl или чистый lng-файл, удаляем коды
 	refSection.ForEachKey(func(k *lng.Key) {
-		k.StripResID()
+		_ = k.StripResID()
 	})
 
 	targetSection.ForEachKey(func(k *lng.Key) {

@@ -61,7 +61,7 @@ func applyOldTranslation(refLngFile *lng.File, oldLngFile *lng.File, markModifie
 
 					// добавляем старую строку с флагом Удалено. добавляемые ключи не попадут в текущий range
 					if markDeleted && keyOldDeleted != nil {
-						section.NewKeyAt(key.Name(), lng.Deleted, keyOldDeleted.Name(), keyOldDeleted.Version(),
+						_, _ = section.NewKeyAt(key.Name(), lng.Deleted, keyOldDeleted.Name(), keyOldDeleted.Version(),
 							keyOldDeleted.Value())
 					}
 				}
@@ -72,7 +72,7 @@ func applyOldTranslation(refLngFile *lng.File, oldLngFile *lng.File, markModifie
 		if markDeleted && sectionOld != nil {
 			for _, key := range sectionOld.Keys() {
 				if kk, _ := section.Key(key.Name()); kk == nil {
-					section.NewKey(lng.Deleted, key.Name(), key.Version(), key.Value())
+					_, _ = section.NewKey(lng.Deleted, key.Name(), key.Version(), key.Value())
 				}
 			}
 		}

@@ -48,8 +48,8 @@ func TestSyncResourceStrings(t *testing.T) {
 	refSection, _ := refFile.NewSection(resourceStringSection)
 
 	for _, testCase := range tests {
-		targetSection.NewKey(testCase.targetFlag, testCase.name, 0, testCase.targetValue)
-		refSection.NewKey(testCase.refFlag, testCase.name, 0, testCase.refValue)
+		_, _ = targetSection.NewKey(testCase.targetFlag, testCase.name, 0, testCase.targetValue)
+		_, _ = refSection.NewKey(testCase.refFlag, testCase.name, 0, testCase.refValue)
 	}
 
 	if err := syncResourceStrings(targetFile, refFile); err != nil {

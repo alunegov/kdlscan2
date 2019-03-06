@@ -51,7 +51,7 @@ func createBackup(fileName string) error {
 func stripResourceID(lngFile *lng.File, needSort bool) error {
 	if s := lngFile.Section(resourceStringSection); s != nil {
 		s.ForEachKey(func(k *lng.Key) {
-			k.StripResID()
+			_ = k.StripResID()
 		})
 
 		// ранее ключи были отсортированы по коду (не по имени модуля/ресурса). сортируем по имени, чтобы было меньше

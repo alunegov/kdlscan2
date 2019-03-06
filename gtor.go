@@ -60,7 +60,7 @@ func restoreResourceID(lngFile *lng.File, drcFile *drc.File) error {
 				return errors.New("no res with name " + k.Name())
 			}
 
-			k.RestoreResID(id)
+			_ = k.RestoreResID(id)
 		}
 
 		// kdl ожидает отсортированные по коду ключи

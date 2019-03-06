@@ -20,7 +20,7 @@ func TestCleanFlags(t *testing.T) {
 
 	section, _ := file.NewSection("test")
 	for _, testCase := range tests {
-		section.NewKey(testCase.flag, testCase.name, 0, "")
+		_, _ = section.NewKey(testCase.flag, testCase.name, 0, "")
 	}
 
 	if err := cleanFlags(file); err != nil {
