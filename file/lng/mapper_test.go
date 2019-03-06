@@ -3,7 +3,7 @@ package lng
 import "testing"
 
 func TestParseKey(t *testing.T) {
-	var tests = []struct{
+	var tests = []struct {
 		s       string
 		flag    KeyFlag
 		name    string

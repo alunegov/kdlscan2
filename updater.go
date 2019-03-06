@@ -1,7 +1,7 @@
 package kdlscan2
 
 import (
-		"github.com/alunegov/kdlscan2/file/lng"
+	"github.com/alunegov/kdlscan2/file/lng"
 )
 
 // Update обновляет lng-файл на основе референсного lng-файла

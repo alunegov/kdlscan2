@@ -1,13 +1,11 @@
 package kdlscan2
 
 import (
-"os"
-"sort"
+	"os"
+	"sort"
 
-
-
-"github.com/alunegov/kdlscan2/file/lng"
-"github.com/alunegov/kdlscan2/file/pseudogettext"
+	"github.com/alunegov/kdlscan2/file/lng"
+	"github.com/alunegov/kdlscan2/file/pseudogettext"
 )
 
 // Scan генерирует референсный lng-файл - сканирование исполняемого файла, добавление строк из псевдо-gettext файлов

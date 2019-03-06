@@ -56,7 +56,7 @@ func syncResourceStrings(targetFile *lng.File, refFile *lng.File) error {
 			return
 		}
 
-		_, name, _ := k.DecodeName()  // если это файл после kdl или чистый lng-файл, берём только имя, без кода
+		_, name, _ := k.DecodeName() // если это файл после kdl или чистый lng-файл, берём только имя, без кода
 		refKey, _ := refSection.Key(name)
 		if refKey != nil && (k.Value() != refKey.Value() || k.Flag() == lng.Modified) {
 			log.Printf("%s:\n", k.Name())

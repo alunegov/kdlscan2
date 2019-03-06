@@ -3,11 +3,11 @@ package kdlscan2
 import (
 	"testing"
 
-		"github.com/alunegov/kdlscan2/file/lng"
+	"github.com/alunegov/kdlscan2/file/lng"
 )
 
 func TestCleanFlags(t *testing.T) {
-	var tests = []struct{
+	var tests = []struct {
 		name string
 		flag lng.KeyFlag
 	}{

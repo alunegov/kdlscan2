@@ -91,7 +91,7 @@ func (k *Key) RestoreResID(resID int) error {
 
 // DecodeName декодирует имя, как имя ресурса
 func (k *Key) DecodeName() (resID int, resName string, err error) {
-	resName = k.name  // на случай, если это не имя ресурса
+	resName = k.name // на случай, если это не имя ресурса
 
 	delim := strings.Index(k.name, "_")
 	if delim == -1 {

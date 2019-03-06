@@ -1,7 +1,7 @@
 package main
 
 import (
-		"log"
+	"log"
 	"os"
 
 	"github.com/alunegov/kdlscan2"

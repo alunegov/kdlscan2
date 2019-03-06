@@ -20,8 +20,8 @@ func TestApplyOldTranslation(t *testing.T) {
 
 	for i := 2; i < 6; i++ {
 		s := strconv.Itoa(i)
-		refSection.NewKey(lng.Std, s, 0, "ref" + s)
-		oldSection.NewKey(lng.Std, s, 0, "ref" + s)
+		refSection.NewKey(lng.Std, s, 0, "ref"+s)
+		oldSection.NewKey(lng.Std, s, 0, "ref"+s)
 	}
 
 	oldSection.NewKey(lng.Std, "8", 0, "old")
@@ -36,7 +36,7 @@ func TestApplyOldTranslation(t *testing.T) {
 }
 
 func TestApplyMarkConf(t *testing.T) {
-	var tests = []struct{
+	var tests = []struct {
 		flag         lng.KeyFlag
 		markModified bool
 		markDeleted  bool

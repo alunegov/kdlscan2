@@ -7,14 +7,14 @@ import (
 )
 
 func TestSyncResourceStrings(t *testing.T) {
-	var tests = []struct{
-		name string
-		targetFlag lng.KeyFlag
+	var tests = []struct {
+		name        string
+		targetFlag  lng.KeyFlag
 		targetValue string
-		refFlag lng.KeyFlag
-		refValue string
-		expFlag lng.KeyFlag
-		expValue string
+		refFlag     lng.KeyFlag
+		refValue    string
+		expFlag     lng.KeyFlag
+		expValue    string
 	}{
 		{"0", lng.Std, "t", lng.Std, "r", lng.Std, "r"},
 		{"1", lng.Std, "t", lng.Modified, "r", lng.Std, "t"},
