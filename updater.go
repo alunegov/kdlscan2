@@ -1,6 +1,8 @@
 package kdlscan2
 
 import (
+	"time"
+
 	"github.com/alunegov/kdlscan2/file/lng"
 )
 
@@ -26,6 +28,11 @@ func Update(targetFileName string, refFileName string, markModified bool, markDe
 	if err := applyOldTranslation(refLngFile, oldLngFile, markModified, markDeleted); err != nil {
 		return err
 	}
+	if refLngFile.Changed {
+		refLngFile.UpdateTime = time.Now()
+	} else {
+		refLngFile.UpdateTime = oldLngFile.UpdateTime
+	}
 
 	if err := lng.Save(refLngFile, targetFileName); err != nil {
 		return err
@@ -36,13 +43,19 @@ func Update(targetFileName string, refFileName string, markModified bool, markDe
 
 // applyOldTranslation применяет перевод из старого файла
 func applyOldTranslation(refLngFile *lng.File, oldLngFile *lng.File, markModified bool, markDeleted bool) error {
+	// refLngFile по алгоритму "загрязнится" (k.SetFlag, k.SetValue, s.NewKeyAt и s.NewKey), поэтому следим за
+	// изменением сами (fileChanged, sectionChanged и keyChanged). За начало берём текущее состояние файла.
+	fileChanged := refLngFile.Changed
+
 	for _, section := range refLngFile.Sections() {
 		sectionOld := oldLngFile.Section(section.Name())
+		sectionChanged := false
 
 		// восстанавливаем переведённые строки
 		for _, key := range section.Keys() {
 			// выставляем флаг Изменено, далее он может измениться на Стд
 			key.SetFlag(applyMarkConf(lng.Modified, markModified, markDeleted))
+			keyChanged := true
 
 			if sectionOld != nil {
 				keyOld, keyOldDeleted := sectionOld.Key(key.Name())
@@ -51,24 +64,34 @@ func applyOldTranslation(refLngFile *lng.File, oldLngFile *lng.File, markModifie
 					if keyOld.Version() < key.Version() {
 						// новая версия строки останется с флагом Изменено, старую добавим с флагом Удалено
 						keyOldDeleted = keyOld
-					} else {
-						if keyOld.Flag() != lng.Deleted {
-							// восстанавлием старый флаг и перевод
-							key.SetFlag(applyMarkConf(keyOld.Flag(), markModified, markDeleted))
-							key.SetValue(keyOld.Value())
-						}
+					} else if keyOld.Flag() != lng.Deleted {
+						// восстанавлием старый флаг и перевод
+						key.SetFlag(applyMarkConf(keyOld.Flag(), markModified, markDeleted))
+						key.SetValue(keyOld.Value())
+						keyChanged = false
 					}
+					// else старый ключ той-же версии, но с флагом Удалено
+					// TODO: сброс keyChanged?
 
-					// добавляем старую строку с флагом Удалено. добавляемые ключи не попадут в текущий range
+					// Добавляем старую строку с флагом Удалено - это может быть как Удалённая строка, так и строка
+					// предыдущей версии. Добавляемые ключи не попадут в текущий range.
+					// sectionChanged не выставляем - строки с флагом Удалено
 					if markDeleted && keyOldDeleted != nil {
 						_, _ = section.NewKeyAt(key.Name(), lng.Deleted, keyOldDeleted.Name(), keyOldDeleted.Version(),
 							keyOldDeleted.Value())
 					}
 				}
+				// else в старой версии нет такого ключа - ключ остаётся с флагом Изменено
+			}
+			// else в старой версии нет такой секции - ключ остаётся с флагом Изменено
+
+			if keyChanged {
+				sectionChanged = true
 			}
 		}
 
 		// добавляем строки из старого файла, которых нет в новом, с флагом Удалено
+		// sectionChanged не выставляем - строки с флагом Удалено
 		if markDeleted && sectionOld != nil {
 			for _, key := range sectionOld.Keys() {
 				if kk, _ := section.Key(key.Name()); kk == nil {
@@ -76,7 +99,13 @@ func applyOldTranslation(refLngFile *lng.File, oldLngFile *lng.File, markModifie
 				}
 			}
 		}
+
+		if sectionChanged {
+			fileChanged = true
+		}
 	}
+
+	refLngFile.Changed = fileChanged
 
 	return nil
 }

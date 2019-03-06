@@ -3,6 +3,7 @@ package kdlscan2
 import (
 	"os"
 	"sort"
+	"time"
 
 	"github.com/alunegov/kdlscan2/file/lng"
 	"github.com/alunegov/kdlscan2/file/pseudogettext"
@@ -26,6 +27,7 @@ func Scan(targetFileName string, lngFileName string, extraFileNames []string) er
 	if err := addPseudoGettextFiles(lngFile, extraFileNames); err != nil {
 		return err
 	}
+	lngFile.UpdateTime = time.Now()
 
 	if err := lng.Save(lngFile, targetFileName); err != nil {
 		return err

@@ -1,7 +1,11 @@
 package lng
 
+import "time"
+
 // File описывате lng-файл
 type File struct {
+	UpdateTime   time.Time
+	Changed      bool
 	sectionsList []string
 	sections     map[string]*Section
 }
@@ -9,6 +13,8 @@ type File struct {
 // NewFile создаёт lng-файл
 func NewFile() *File {
 	return &File{
+		UpdateTime:   time.Now(),
+		Changed:      false,
 		sectionsList: make([]string, 0, 10),
 		sections:     make(map[string]*Section),
 	}
@@ -16,7 +22,8 @@ func NewFile() *File {
 
 // NewSection добавляет новую секцию
 func (f *File) NewSection(name string) (*Section, error) {
-	s := newSection(name)
+	s := newSection(f, name)
+	f.changed()
 	f.sectionsList = append(f.sectionsList, name)
 	f.sections[name] = s
 	return s, nil
@@ -34,4 +41,8 @@ func (f *File) Sections() []*Section {
 // Section возвращает секцию по имени
 func (f *File) Section(name string) *Section {
 	return f.sections[name]
+}
+
+func (f *File) changed() {
+	f.Changed = true
 }

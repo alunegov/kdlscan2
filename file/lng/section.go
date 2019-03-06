@@ -7,13 +7,15 @@ import (
 
 // Section описывает секцию lng-файла
 type Section struct {
+	file *File
 	name string
 	keys []*Key
 }
 
 // newSection создаёт секцию
-func newSection(name string) *Section {
+func newSection(file *File, name string) *Section {
 	return &Section{
+		file: file,
 		name: name,
 		keys: make([]*Key, 0),
 	}
@@ -31,7 +33,8 @@ func (s *Section) Keys() []*Key {
 
 // NewKey добавляет новый ключ
 func (s *Section) NewKey(flag KeyFlag, name string, version KeyVersion, value string) (*Key, error) {
-	k := newKey(flag, name, version, value)
+	k := newKey(s.file, flag, name, version, value)
+	s.changed()
 	s.keys = append(s.keys, k)
 	return k, nil
 }
@@ -40,7 +43,8 @@ func (s *Section) NewKey(flag KeyFlag, name string, version KeyVersion, value st
 func (s *Section) NewKeyAt(atName string, flag KeyFlag, name string, version KeyVersion, value string) (*Key, error) {
 	for i, k := range s.keys {
 		if k.Name() == atName {
-			kk := newKey(flag, name, version, value)
+			kk := newKey(s.file, flag, name, version, value)
+			s.changed()
 			// insert kk at i+1
 			s.keys = append(s.keys, nil)
 			copy(s.keys[i+2:], s.keys[i+1:])
@@ -85,6 +89,9 @@ func (s *Section) FilterKey(op func(k *Key) bool) {
 		}
 	}
 
+	if len(s.keys) != len(filtered) {
+		s.changed()
+	}
 	s.keys = filtered
 }
 
@@ -98,7 +105,13 @@ func (s *Section) ForEachKey(op func(k *Key)) {
 
 // SortKeys сортирует ключи по имени
 func (s *Section) SortKeys() {
+	s.changed() // но если ключи уже отсортированы - изменения по факту не будет
 	sort.Slice(s.keys, func(i, j int) bool {
 		return s.keys[i].Name() < s.keys[j].Name()
 	})
+}
+
+// changed выставляет флаг Изменено у lng-файла
+func (s *Section) changed() {
+	s.file.Changed = true
 }

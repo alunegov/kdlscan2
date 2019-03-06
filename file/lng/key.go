@@ -42,6 +42,7 @@ func (v KeyVersion) String() string {
 
 // Key описывает ключ секции lng-файла
 type Key struct {
+	file    *File
 	flag    KeyFlag
 	name    string
 	version KeyVersion
@@ -49,8 +50,9 @@ type Key struct {
 }
 
 // newKey создаёт ключ
-func newKey(flag KeyFlag, name string, version KeyVersion, value string) *Key {
+func newKey(file *File, flag KeyFlag, name string, version KeyVersion, value string) *Key {
 	return &Key{
+		file:    file,
 		flag:    flag,
 		name:    name,
 		version: version,
@@ -62,13 +64,23 @@ func newKey(flag KeyFlag, name string, version KeyVersion, value string) *Key {
 func (k *Key) Flag() KeyFlag { return k.flag }
 
 // SetFlag задаёт флаг
-func (k *Key) SetFlag(flag KeyFlag) { k.flag = flag }
+func (k *Key) SetFlag(flag KeyFlag) {
+	if k.flag != flag {
+		k.changed()
+		k.flag = flag
+	}
+}
 
 // Name возвращает имя
 func (k *Key) Name() string { return k.name }
 
 // SetName задаёт имя
-func (k *Key) SetName(name string) { k.name = name }
+func (k *Key) SetName(name string) {
+	if k.name != name {
+		k.changed()
+		k.name = name
+	}
+}
 
 // StripResID удаляет код ресурса из имени
 func (k *Key) StripResID() error {
@@ -76,6 +88,7 @@ func (k *Key) StripResID() error {
 	if err != nil {
 		return err
 	}
+	k.changed()
 	k.name = resName
 	return nil
 }
@@ -85,6 +98,7 @@ func (k *Key) RestoreResID(resID int) error {
 	if _, _, err := k.DecodeName(); err == nil {
 		return errors.New("already with resID")
 	}
+	k.changed()
 	k.name = strconv.Itoa(resID) + "_" + k.name
 	return nil
 }
@@ -112,14 +126,29 @@ func (k *Key) DecodeName() (resID int, resName string, err error) {
 func (k *Key) Version() KeyVersion { return k.version }
 
 // SetVersion задаёт версию
-func (k *Key) SetVersion(version KeyVersion) { k.version = version }
+func (k *Key) SetVersion(version KeyVersion) {
+	if k.version != version {
+		k.changed()
+		k.version = version
+	}
+}
 
 // Value возвращает значение
 func (k *Key) Value() string { return k.value }
 
 // SetValue задаёт значение
-func (k *Key) SetValue(value string) { k.value = value }
+func (k *Key) SetValue(value string) {
+	if k.value != value {
+		k.changed()
+		k.value = value
+	}
+}
 
 func (k *Key) String() string {
 	return fmt.Sprintf("%s%s%s=%s", k.flag, k.name, k.version, k.value)
+}
+
+// changed выставляет флаг Изменено у lng-файла
+func (k *Key) changed() {
+	k.file.Changed = true
 }

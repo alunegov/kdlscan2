@@ -35,6 +35,27 @@ func TestApplyOldTranslation(t *testing.T) {
 	}
 }
 
+func TestApplyOldTranslation_WillPreserveUpdateTimeWhenNoChanges(t *testing.T) {
+	refLngFile := lng.NewFile()
+	oldLngFile := lng.NewFile()
+
+	refSection, _ := refLngFile.NewSection("[TIDSMainForm]")
+	oldSection, _ := oldLngFile.NewSection("[TIDSMainForm]")
+
+	_, _ = refSection.NewKey(lng.Modified, "1", 0, "ref")
+	_, _ = oldSection.NewKey(lng.Modified, "1", 0, "old")
+
+	refLngFile.Changed = false
+
+	if err := applyOldTranslation(refLngFile, oldLngFile, true, true); err != nil {
+		t.Error(err)
+	}
+
+	if refLngFile.Changed {
+		t.Error("err")
+	}
+}
+
 func TestApplyMarkConf(t *testing.T) {
 	var tests = []struct {
 		flag         lng.KeyFlag

@@ -3,6 +3,7 @@ package kdlscan2
 import (
 	"errors"
 	"log"
+	"time"
 
 	"github.com/alunegov/kdlscan2/file/lng"
 )
@@ -24,6 +25,9 @@ func Sync(targetFileName string, refFileName string) error {
 
 	if err := syncResourceStrings(target, ref); err != nil {
 		return err
+	}
+	if target.Changed {
+		target.UpdateTime = time.Now()
 	}
 
 	if err := lng.Save(target, targetFileName); err != nil {
@@ -59,6 +63,7 @@ func syncResourceStrings(targetFile *lng.File, refFile *lng.File) error {
 		_, name, _ := k.DecodeName() // если это файл после kdl или чистый lng-файл, берём только имя, без кода
 		refKey, _ := refSection.Key(name)
 		if refKey != nil && (k.Value() != refKey.Value() || k.Flag() == lng.Modified) {
+			// TODO: внедрять logger через DI
 			log.Printf("%s:\n", k.Name())
 			log.Printf("    '%s'   ->   '%s'\n", k.Value(), refKey.Value())
 

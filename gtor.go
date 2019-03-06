@@ -2,6 +2,7 @@ package kdlscan2
 
 import (
 	"errors"
+	"time"
 
 	"github.com/alunegov/kdlscan2/file/drc"
 	"github.com/alunegov/kdlscan2/file/lng"
@@ -28,6 +29,7 @@ func Generate(targetFileName string, lngFileName string, drcFileName string, drc
 	if err := restoreResourceID(lngFile, drcFile); err != nil {
 		return err
 	}
+	lngFile.UpdateTime = time.Now()
 
 	if err := lng.Save(lngFile, targetFileName); err != nil {
 		return err

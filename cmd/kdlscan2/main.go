@@ -64,7 +64,7 @@ func update(args []string) {
 
 func generate(args []string) {
 	if len(args) < 4 {
-		log.Fatalln("update usage: kdlscan2 generate target(lng) proto drc [drc_encoding]")
+		log.Fatalln("generate usage: kdlscan2 generate target(lng) proto drc [drc_encoding]")
 	}
 	drcFileEnc := ""
 	if len(args) > 5 {
