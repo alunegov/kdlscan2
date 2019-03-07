@@ -25,7 +25,9 @@ func Load(fileName string) (*File, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func(_f *os.File) {
+		_ = _f.Close()
+	}(f)
 
 	var section *Section
 	state := parseComment
@@ -123,12 +125,18 @@ func parseUpdateTime(s string) (time.Time, error) {
 }
 
 // Save сохраняет lng-файл на диск
-func Save(file *File, fileName string) error {
+func Save(file *File, fileName string) (ferr error) {
 	f, err := os.Create(fileName)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func(_f *os.File) {
+		err := _f.Close()
+		// агримся на ошибку закрытия файла, но не переопределяем возможную ошибку в функции, произошедшую ранее
+		if ferr != nil {
+			ferr = err
+		}
+	}(f)
 
 	w := bufio.NewWriter(f)
 	if _, err = w.WriteString("; Kryvich's Delphi Localizer Language File." + "\r\n" +

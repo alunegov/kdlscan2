@@ -74,7 +74,9 @@ func (f *File) parse(fileName string, encoding string) error {
 	if err != nil {
 		return err
 	}
-	defer ff.Close()
+	defer func(_f *os.File) {
+		_ = _f.Close()
+	}(ff)
 
 	var t io.Reader
 	if encoding == "" {

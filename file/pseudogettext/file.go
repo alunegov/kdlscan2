@@ -30,7 +30,9 @@ func loadLines(fileName string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func(_f *os.File) {
+		_ = _f.Close()
+	}(f)
 
 	res := make([]string, 0)
 
