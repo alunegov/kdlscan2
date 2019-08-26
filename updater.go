@@ -65,8 +65,9 @@ func applyOldTranslation(refLngFile *lng.File, oldLngFile *lng.File, markModifie
 						// новая версия строки останется с флагом Изменено, старую добавим с флагом Удалено
 						keyOldDeleted = keyOld
 					} else if keyOld.Flag() != lng.Deleted {
-						// восстанавлием старый флаг и перевод
+						// восстанавлием старый флаг, версию и перевод
 						key.SetFlag(applyMarkConf(keyOld.Flag(), markModified, markDeleted))
+						key.SetVersion(keyOld.Version())
 						key.SetValue(keyOld.Value())
 						keyChanged = false
 					}
