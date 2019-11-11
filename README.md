@@ -10,14 +10,11 @@
 
 Загрузить исполняемый файл со страницы [Releases](https://github.com/alunegov/kdlscan2/releases).
 
-### Используя go get
-
-Требуются установленные [Go 1.10+](https://golang.org/) и [dep 0.5.0+](https://github.com/golang/dep).
+### Используя go modules
 
 ```
-go get -d github.com/alunegov/kdlscan2
-cd %GOPATH%/src/github.com/alunegov/kdlscan2
-dep ensure
+git clone https://github.com/alunegov/kdlscan2.git
+cd kdlscan2
 go install github.com/alunegov/kdlscan2/cmd/kdlscan2
 ```
 
