@@ -1,6 +1,6 @@
 # kdlscan2
 
-[![Build Status](https://travis-ci.org/alunegov/kdlscan2.svg?branch=master)](https://travis-ci.org/alunegov/kdlscan2)
+[![Build Status](https://github.com/alunegov/kdlscan2/workflows/Test/badge.svg)](https://github.com/alunegov/kdlscan2/actions)
 
 Утилита для синхронизации файлов локализации для [Kryvich's Delphi Localizer](https://sites.google.com/site/kryvich/localizer). В отличие от оригинальных kdlscan/lngupdate не использует коды ресурсов (resourcestring) во временных файлах и поддерживает добавление строк для псевдо-gettext режима.
 
