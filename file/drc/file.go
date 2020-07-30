@@ -136,16 +136,26 @@ func (f *File) parse(fileName string, encoding string) error {
 // Формат строки - `#define RbDiagnosisReportService_SWaitDiag 62944`
 func parseDefine(s string) (key string, id int) {
 	f := strings.Fields(s)
+	// TODO: bounds check
 	key = f[1]
 	id, _ = strconv.Atoi(f[2])
 	return
 }
 
 // parseString разбирает строку с тестом ресурса
-// Формат строки - `	RbDiagnosisReportService_SWaitDiag,	"Ждите, идет диагностика..."`
+// Формат строки - `	RbDiagnosisReportService_SWaitDiag,	"Ждите, идет диагностика..."` в D7 или
+// `	RbDiagnosisReportService_SWaitDiag,	L"\x0416\x0434\x0438\x0442\x0435, \x0438\x0434\x0435\x0442 \x0434\x0438\x0430\x0433\x043d\x043e\x0441\x0442\x0438\x043a\x0430..."` в DXE
 func parseString(s string) (key string, str string) {
 	i := strings.Index(s, ",")
+	// TODO: bounds check
 	key = strings.TrimSpace(s[:i])
-	str = s[i+3 : len(s)-1]
+	if s[i+2] == 'L' {
+		str = s[i+3:]
+		// in Delphi '\x' means HEX (encoding are UTF-16); in Go '\x' means UTF-8, '\u' means UTF-16
+		str = strings.Replace(str, `\x`, `\u`, -1)
+		str, _ = strconv.Unquote(str)
+	} else {
+		str = s[i+3 : len(s)-1]
+	}
 	return
 }
